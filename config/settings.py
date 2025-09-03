@@ -130,3 +130,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# config/settings.py
+AUTHENTICATION_BACKENDS = [
+    'historico.backends.MatriculaCPFBackend',  # Backend personalizado
+    'django.contrib.auth.backends.ModelBackend',  # Backend padrão (para admin e outros)
+]
