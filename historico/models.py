@@ -68,3 +68,53 @@ def update_user_for_colaborador(sender, instance, **kwargs):
         instance.user.first_name = instance.nome
         instance.user.last_name = instance.sobrenome
         instance.user.save()
+        
+        
+        
+class Navio(models.Model):
+    boca = models.CharField(max_length=50, blank=True, null=True)
+    armador = models.CharField(max_length=100, blank=True, null=True)
+    agencia = models.CharField(max_length=100, blank=True, null=True)
+    lado = models.CharField(max_length=50, blank=True, null=True)
+    eta = models.DateTimeField("ETA", blank=True, null=True)
+    pob = models.DateTimeField("POB", blank=True, null=True)
+    local_atracacao = models.CharField(max_length=100, blank=True, null=True)
+    inicio_operacao = models.DateTimeField("Início Operação", blank=True, null=True)
+
+    # Ternos pode ficar opcional também
+    ternos = models.IntegerField(blank=True, null=True)
+
+    # Em horas → pode usar CharField se não precisar calcular
+    tempo_operacao = models.DurationField("Tempo de Operação", null=True, blank=True)
+
+    # Texto para permitir valores variados
+    volume_descarga = models.CharField(blank=True, null=True)
+    clientes_descarga = models.CharField(blank=True, null=True)
+    volume_embarque = models.CharField(blank=True, null=True)
+    clientes_embarque = models.CharField(blank=True, null=True)  
+
+    # Quem cadastrou
+    criado_por = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="navios"
+    )
+
+    def __str__(self):
+        return f"{self.armador or '---'} - {self.local_atracacao or '---'}"
+
+
+
+class FotoVideoNavio(models.Model):
+    navio = models.ForeignKey(Navio, on_delete=models.CASCADE, related_name="midias")
+    arquivo = models.FileField(upload_to="navios/midias/")
+    observacao = models.TextField(blank=True, null=True)
+
+    def is_image(self):
+        return self.arquivo.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+
+    def is_video(self):
+        return self.arquivo.name.lower().endswith(('.mp4', '.avi', '.mov'))
+    
+    
+class DocumentoNavio(models.Model):
+    navio = models.ForeignKey(Navio, on_delete=models.CASCADE, related_name="documentos")
+    arquivo = models.FileField(upload_to="navios/documentos/")

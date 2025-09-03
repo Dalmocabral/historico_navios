@@ -1,0 +1,185 @@
+{% extends "base/base_dashboard.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Cadastro de Navio</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Dados básicos do navio -->
+        <h4 class="mb-3">Dados do Navio</h4>
+        <div class="row">
+            {% for field in navio_form %}
+            <div class="col-md-6 mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Fotos/Vídeos -->
+        <h4 class="mt-4">Anexar Fotos/Vídeos</h4>
+        <div id="midias-container">
+            <div class="mb-3 file-input">
+                <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
+                <textarea name="observacoes" class="form-control mt-2" placeholder="Observação"></textarea>
+                <div class="preview mt-2"></div>
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
+                    Remover
+                </button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-secondary mb-4" onclick="addFileInput()">+ Adicionar mais Fotos/Vídeos</button>
+
+        <!-- PDFs -->
+        <h4 class="mt-4">Anexar Documentos PDF</h4>
+        <div id="pdf-container">
+            <div class="mb-3 pdf-input">
+                <input type="file" name="arquivos" accept="application/pdf" class="form-control">
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
+                    Remover
+                </button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-secondary mb-4" onclick="addPdfInput()">+ Adicionar mais PDFs</button>
+        <div id="pdf-preview" class="mb-3"></div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <!-- Modal de Sucesso -->
+<div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sucessoModalLabel">Cadastro realizado</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        O navio foi cadastrado com sucesso!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+/* ------------------ Fotos/Vídeos ------------------ */
+function addFileInput() {
+    const container = document.getElementById("midias-container");
+    const div = document.createElement("div");
+    div.classList.add("mb-3", "file-input");
+    div.innerHTML = `
+        <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
+        <textarea name="observacoes" class="form-control mt-2" placeholder="Observação"></textarea>
+        <div class="preview mt-2"></div>
+        <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
+            Remover
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function previewFile(input) {
+    const file = input.files[0];
+    const previewDiv = input.parentNode.querySelector(".preview");
+    previewDiv.innerHTML = "";
+
+    if (!file) return;
+
+    if (file.type.startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.classList.add("img-thumbnail");
+        img.style.maxWidth = "150px";
+        img.style.maxHeight = "150px";
+        previewDiv.appendChild(img);
+    } else if (file.type.startsWith("video/")) {
+        const video = document.createElement("video");
+        video.src = URL.createObjectURL(file);
+        video.controls = true;
+        video.style.maxWidth = "200px";
+        previewDiv.appendChild(video);
+    }
+}
+
+/* ------------------ PDFs ------------------ */
+function addPdfInput() {
+    const container = document.getElementById("pdf-container");
+    const div = document.createElement("div");
+    div.classList.add("mb-3", "pdf-input");
+    div.innerHTML = `
+        <input type="file" name="arquivos" accept="application/pdf" class="form-control">
+        <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
+            Remover
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+// Preview para PDFs
+document.addEventListener('change', function(e) {
+    if (e.target.name === 'arquivos') {
+        const previewDiv = document.getElementById('pdf-preview');
+        previewDiv.innerHTML = '';
+        const files = Array.from(document.querySelectorAll('input[name="arquivos"]'))
+                           .map(i => i.files[0])
+                           .filter(f => f);
+
+        if (files.length > 0) {
+            const ul = document.createElement('ul');
+            ul.classList.add('list-group');
+            files.forEach(file => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+                li.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                ul.appendChild(li);
+            });
+            previewDiv.appendChild(ul);
+        }
+    }
+});
+
+/* ------------------ Modal de sucesso e limpeza ------------------ */
+document.addEventListener("DOMContentLoaded", function() {
+    {% if cadastro_sucesso %}
+    // Abrir modal
+    var sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+    sucessoModal.show();
+
+    // Limpar formulários
+    document.getElementById("midias-container").innerHTML = `
+        <div class="mb-3 file-input">
+            <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
+            <textarea name="observacoes" class="form-control mt-2" placeholder="Observação"></textarea>
+            <div class="preview mt-2"></div>
+            <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
+                Remover
+            </button>
+        </div>
+    `;
+
+    document.getElementById("pdf-container").innerHTML = `
+        <div class="mb-3 pdf-input">
+            <input type="file" name="arquivos" accept="application/pdf" class="form-control">
+            <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
+                Remover
+            </button>
+        </div>
+    `;
+    document.getElementById("pdf-preview").innerHTML = "";
+    {% endif %}
+});
+</script>
+
+{% endblock %}
