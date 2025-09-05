@@ -1,185 +1,495 @@
 {% extends "base/base_dashboard.html" %}
 {% load static %}
 
+{% block extra_css %}
+<style>
+    /* Estilos profissionais com sombreados e efeitos */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        background: #ffffff;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        transform: translateY(-1px);
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border: none;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(52, 152, 219, 0.4);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        border: none;
+        box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(149, 165, 166, 0.4);
+    }
+    
+    .btn-outline-danger {
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
+    
+    .media-item {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .media-item:hover {
+        background: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    .pdf-input {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px dashed #dee2e6;
+        transition: all 0.3s ease;
+    }
+    
+    .pdf-input:hover {
+        background: #e8f4fd;
+        border-color: #3498db;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+    }
+    
+    .list-group-item {
+        border-radius: 8px !important;
+        margin-bottom: 0.5rem;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        background: #f8f9fa;
+        transform: translateX(5px);
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+    }
+    
+    .preview {
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 2px dashed #dee2e6;
+        transition: all 0.3s ease;
+    }
+    
+    .preview:hover {
+        border-color: #3498db;
+        background: #e8f4fd;
+    }
+    
+    .img-thumbnail {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .img-thumbnail:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Efeitos de foco e hover para todos os elementos interativos */
+    input:focus, textarea:focus, select:focus, button:focus {
+        outline: none;
+        transform: translateY(-1px);
+    }
+    
+    /* Animações sutis */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card {
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Responsividade mantida */
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 1rem;
+        }
+        
+        .card-header, .card-body {
+            padding: 1rem;
+        }
+        
+        .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
-    <h2>Cadastro de Navio</h2>
-    <form method="post" enctype="multipart/form-data">
+    <h2 class="mb-4 fw-bold text-dark">Cadastro de Navio</h2>
+    
+    <!-- Exibir mensagens do Django -->
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+            <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle{% else %}bi-check-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data" id="ship-registration-form">
         {% csrf_token %}
         
         <!-- Dados básicos do navio -->
-        <h4 class="mb-3">Dados do Navio</h4>
-        <div class="row">
-            {% for field in navio_form %}
-            <div class="col-md-6 mb-3">
-                <label class="form-label">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="text-danger small">{{ field.errors }}</div>
-                {% endif %}
+        <section class="card mb-4">
+            <div class="card-header bg-primary">
+                <h4 class="mb-0 text-white"><i class="bi bi-info-circle me-2"></i>Dados do Navio</h4>
             </div>
-            {% endfor %}
-        </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for field in navio_form %}
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text text-muted">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
 
         <!-- Fotos/Vídeos -->
-        <h4 class="mt-4">Anexar Fotos/Vídeos</h4>
-        <div id="midias-container">
-            <div class="mb-3 file-input">
-                <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
-                <textarea name="observacoes" class="form-control mt-2" placeholder="Observação"></textarea>
-                <div class="preview mt-2"></div>
-                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
-                    Remover
+        <section class="card mb-4">
+            <div class="card-header bg-primary">
+                <h4 class="mb-0 text-white"><i class="bi bi-camera-video me-2"></i>Anexar Fotos/Vídeos</h4>
+            </div>
+            <div class="card-body">
+                <div id="midias-container">
+                    <div class="mb-3 p-3 media-item">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Arquivo de Mídia</label>
+                                <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tipo de Peça</label>
+                                <input type="text" name="tipo_peca" class="form-control" placeholder="Ex: Foto do navio, Vídeo da operação">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Observação</label>
+                                <textarea name="observacoes" class="form-control" placeholder="Observação" rows="2"></textarea>
+                            </div>
+                            <div class="col-12 preview mt-2"></div>
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMediaInput(this)">
+                                    <i class="bi bi-trash me-1"></i> Remover
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary mt-3" onclick="addMediaInput()">
+                    <i class="bi bi-plus-circle me-1"></i> Adicionar mais mídias
                 </button>
             </div>
-        </div>
-        <button type="button" class="btn btn-sm btn-secondary mb-4" onclick="addFileInput()">+ Adicionar mais Fotos/Vídeos</button>
-
+        </section>
+       
         <!-- PDFs -->
-        <h4 class="mt-4">Anexar Documentos PDF</h4>
-        <div id="pdf-container">
-            <div class="mb-3 pdf-input">
-                <input type="file" name="arquivos" accept="application/pdf" class="form-control">
-                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
-                    Remover
-                </button>
+        <section class="card mb-4">
+            <div class="card-header bg-primary">
+                <h4 class="mb-0 text-white"><i class="bi bi-file-earmark-pdf me-2"></i>Anexar Documentos PDF</h4>
             </div>
-        </div>
-        <button type="button" class="btn btn-sm btn-secondary mb-4" onclick="addPdfInput()">+ Adicionar mais PDFs</button>
-        <div id="pdf-preview" class="mb-3"></div>
+            <div class="card-body">
+                <div id="pdf-container">
+                    <div class="mb-3 pdf-input d-flex align-items-center">
+                        <input type="file" name="arquivos" accept="application/pdf" class="form-control me-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.parentElement.remove()">
+                            <i class="bi bi-x"></i> Remover
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary mt-3" onclick="addPdfInput()">
+                    <i class="bi bi-plus-circle me-1"></i> Adicionar mais PDFs
+                </button>
+                <div id="pdf-preview" class="mt-3"></div>
+            </div>
+        </section>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Salvar</button>
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+        <div class="mt-4 pt-3 border-top">
+            <button type="submit" class="btn btn-primary me-2">
+                <i class="bi bi-check-circle me-1"></i> Salvar
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle me-1"></i> Cancelar
+            </a>
         </div>
     </form>
 
     <!-- Modal de Sucesso -->
-<div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="sucessoModalLabel">Cadastro realizado</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        O navio foi cadastrado com sucesso!
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-      </div>
+    <div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="sucessoModalLabel">
+                        <i class="bi bi-check-circle me-2"></i>Cadastro realizado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-check-circle display-4 text-success mb-3"></i>
+                    <h4>Navio cadastrado com sucesso!</h4>
+                    <p class="text-muted">O navio foi registrado no sistema com todas as informações.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                        <i class="bi bi-check-lg me-1"></i> Continuar
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-</div>
-
+<br>
+<br>
 <script>
-/* ------------------ Fotos/Vídeos ------------------ */
-function addFileInput() {
-    const container = document.getElementById("midias-container");
-    const div = document.createElement("div");
-    div.classList.add("mb-3", "file-input");
-    div.innerHTML = `
-        <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
-        <textarea name="observacoes" class="form-control mt-2" placeholder="Observação"></textarea>
-        <div class="preview mt-2"></div>
-        <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
-            Remover
-        </button>
-    `;
-    container.appendChild(div);
-}
+    document.addEventListener("DOMContentLoaded", function() {
+        // Funções JavaScript existentes (mantenha todas as suas funções)
+        window.addMediaInput = function() {
+            const container = document.getElementById("midias-container");
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "p-3", "media-item");
+            div.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Arquivo de Mídia</label>
+                        <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Tipo de Peça</label>
+                        <input type="text" name="tipo_peca" class="form-control" placeholder="Ex: Foto do navio, Vídeo da operação">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Observação</label>
+                        <textarea name="observacoes" class="form-control" placeholder="Observação" rows="2"></textarea>
+                    </div>
+                    <div class="col-12 preview mt-2"></div>
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMediaInput(this)">
+                            <i class="bi bi-trash me-1"></i> Remover
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        };
 
-function previewFile(input) {
-    const file = input.files[0];
-    const previewDiv = input.parentNode.querySelector(".preview");
-    previewDiv.innerHTML = "";
+        window.removeMediaInput = function(button) {
+            button.closest(".media-item").remove();
+        };
 
-    if (!file) return;
+        window.previewFile = function(input) {
+            const file = input.files[0];
+            const previewDiv = input.closest(".media-item").querySelector(".preview");
+            previewDiv.innerHTML = "";
 
-    if (file.type.startsWith("image/")) {
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-        img.classList.add("img-thumbnail");
-        img.style.maxWidth = "150px";
-        img.style.maxHeight = "150px";
-        previewDiv.appendChild(img);
-    } else if (file.type.startsWith("video/")) {
-        const video = document.createElement("video");
-        video.src = URL.createObjectURL(file);
-        video.controls = true;
-        video.style.maxWidth = "200px";
-        previewDiv.appendChild(video);
-    }
-}
+            if (!file) return;
 
-/* ------------------ PDFs ------------------ */
-function addPdfInput() {
-    const container = document.getElementById("pdf-container");
-    const div = document.createElement("div");
-    div.classList.add("mb-3", "pdf-input");
-    div.innerHTML = `
-        <input type="file" name="arquivos" accept="application/pdf" class="form-control">
-        <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
-            Remover
-        </button>
-    `;
-    container.appendChild(div);
-}
+            if (file.type.startsWith("image/")) {
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(file);
+                img.classList.add("img-thumbnail", "mt-2");
+                img.style.maxWidth = "150px";
+                img.style.maxHeight = "150px";
+                previewDiv.appendChild(img);
+            } else if (file.type.startsWith("video/")) {
+                const video = document.createElement("video");
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.classList.add("img-thumbnail", "mt-2");
+                video.style.maxWidth = "200px";
+                previewDiv.appendChild(video);
+            }
+        };
 
-// Preview para PDFs
-document.addEventListener('change', function(e) {
-    if (e.target.name === 'arquivos') {
-        const previewDiv = document.getElementById('pdf-preview');
-        previewDiv.innerHTML = '';
-        const files = Array.from(document.querySelectorAll('input[name="arquivos"]'))
-                           .map(i => i.files[0])
-                           .filter(f => f);
+        window.addPdfInput = function() {
+            const container = document.getElementById("pdf-container");
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "pdf-input", "d-flex", "align-items-center");
+            div.innerHTML = `
+                <input type="file" name="arquivos" accept="application/pdf" class="form-control me-2">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x"></i> Remover
+                </button>
+            `;
+            container.appendChild(div);
+        };
 
-        if (files.length > 0) {
-            const ul = document.createElement('ul');
-            ul.classList.add('list-group');
-            files.forEach(file => {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-                li.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
-                ul.appendChild(li);
-            });
-            previewDiv.appendChild(ul);
-        }
-    }
-});
+        // Event listener para pré-visualização de PDFs
+        document.addEventListener("change", function(e) {
+            if (e.target.name === "arquivos") {
+                const previewDiv = document.getElementById("pdf-preview");
+                previewDiv.innerHTML = "";
+                const files = Array.from(document.querySelectorAll("input[name='arquivos']"))
+                                   .map(i => i.files[0])
+                                   .filter(f => f);
 
-/* ------------------ Modal de sucesso e limpeza ------------------ */
-document.addEventListener("DOMContentLoaded", function() {
-    {% if cadastro_sucesso %}
-    // Abrir modal
-    var sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
-    sucessoModal.show();
+                if (files.length > 0) {
+                    const ul = document.createElement("ul");
+                    ul.classList.add("list-group");
+                    files.forEach(file => {
+                        const li = document.createElement("li");
+                        li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+                        li.innerHTML = `
+                            <div>
+                                <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                                <span class="fw-medium">${file.name}</span>
+                                <small class="text-muted d-block">(${(file.size / 1024).toFixed(2)} KB)</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.list-group-item').remove()">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        `;
+                        ul.appendChild(li);
+                    });
+                    previewDiv.appendChild(ul);
+                }
+            }
+        });
 
-    // Limpar formulários
-    document.getElementById("midias-container").innerHTML = `
-        <div class="mb-3 file-input">
-            <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
-            <textarea name="observacoes" class="form-control mt-2" placeholder="Observação"></textarea>
-            <div class="preview mt-2"></div>
-            <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
-                Remover
-            </button>
-        </div>
-    `;
+        // Lógica para exibir o modal de sucesso APENAS quando necessário
+        {% if mostrar_modal_sucesso %}
+            var sucessoModal = new bootstrap.Modal(document.getElementById("sucessoModal"));
+            sucessoModal.show();
 
-    document.getElementById("pdf-container").innerHTML = `
-        <div class="mb-3 pdf-input">
-            <input type="file" name="arquivos" accept="application/pdf" class="form-control">
-            <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="this.parentElement.remove()">
-                Remover
-            </button>
-        </div>
-    `;
-    document.getElementById("pdf-preview").innerHTML = "";
-    {% endif %}
-});
+            // Limpar a URL removendo o parâmetro 'sucesso' sem recarregar a página
+            const url = new URL(window.location);
+            if (url.searchParams.has('sucesso')) {
+                url.searchParams.delete('sucesso');
+                window.history.replaceState({}, '', url);
+            }
+
+            // Limpar formulário após sucesso
+            document.getElementById("ship-registration-form").reset();
+            document.getElementById("midias-container").innerHTML = `
+                <div class="mb-3 p-3 media-item">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Arquivo de Mídia</label>
+                            <input type="file" name="midias" accept="image/*,video/*" class="form-control" onchange="previewFile(this)">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tipo de Peça</label>
+                            <input type="text" name="tipo_peca" class="form-control" placeholder="Ex: Foto do navio, Vídeo da operação">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Observação</label>
+                            <textarea name="observacoes" class="form-control" placeholder="Observação" rows="2"></textarea>
+                        </div>
+                        <div class="col-12 preview mt-2"></div>
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMediaInput(this)">
+                                <i class="bi bi-trash me-1"></i> Remover
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById("pdf-container").innerHTML = `
+                <div class="mb-3 pdf-input d-flex align-items-center">
+                    <input type="file" name="arquivos" accept="application/pdf" class="form-control me-2">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.parentElement.remove()">
+                        <i class="bi bi-x"></i> Remover
+                    </button>
+                </div>
+            `;
+            document.getElementById("pdf-preview").innerHTML = "";
+        {% endif %}
+    });
 </script>
 
 {% endblock %}

@@ -25,18 +25,21 @@ class NavioForm(forms.ModelForm):
     class Meta:
         model = Navio
         fields = [
-            "boca", "armador", "agencia", "lado", "eta", "pob",
-            "local_atracacao", "inicio_operacao", "ternos", "tempo_operacao",
-            "volume_descarga", "clientes_descarga", "volume_embarque", "clientes_embarque",
+            "navio", "boca", "loa", "armador", "agencia", "bordo", "eta", "pob",
+            "inicio_operacao", "fim_operacao", "ternos", "tempo_operacao", "inicio_operacao",   
+            "fim_operacao", "volume_descarga", "peso_descarga", "volume_embarque", "peso_embarque",
         ]
         widgets = {
             "eta": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "pob": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "inicio_operacao": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "tempo_operacao": forms.TimeInput(attrs={"type": "time"}),
+            "fim_operacao": forms.TimeInput(attrs={"type": "datetime-local"}),
         }
 
 class FotoVideoNavioForm(forms.ModelForm):
     class Meta:
         model = FotoVideoNavio
-        fields = ["arquivo", "observacao"]
-        widgets = {"observacao": forms.Textarea(attrs={"rows": 2})}
+        fields = ["arquivo", "observacao", "tipo_peca"]
+        widgets = {"observacao": forms.Textarea(attrs={"rows": 2}),
+                   "tipo_peca": forms.TextInput(attrs={"placeholder": "Ex: Foto do navio, Vídeo da operação, etc."})}

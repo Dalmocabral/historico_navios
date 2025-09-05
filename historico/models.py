@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
@@ -72,14 +73,16 @@ def update_user_for_colaborador(sender, instance, **kwargs):
         
         
 class Navio(models.Model):
+    navio = models.CharField(max_length=100, blank=True, null=True)
     boca = models.CharField(max_length=50, blank=True, null=True)
+    loa = models.CharField(max_length=50, blank=True, null=True)
     armador = models.CharField(max_length=100, blank=True, null=True)
     agencia = models.CharField(max_length=100, blank=True, null=True)
-    lado = models.CharField(max_length=50, blank=True, null=True)
+    bordo = models.CharField(max_length=50, blank=True, null=True)
     eta = models.DateTimeField("ETA", blank=True, null=True)
-    pob = models.DateTimeField("POB", blank=True, null=True)
-    local_atracacao = models.CharField(max_length=100, blank=True, null=True)
+    pob = models.DateTimeField("POB", blank=True, null=True)    
     inicio_operacao = models.DateTimeField("Início Operação", blank=True, null=True)
+    fim_operacao = models.DateTimeField("Termino Operação", blank=True, null=True)
 
     # Ternos pode ficar opcional também
     ternos = models.IntegerField(blank=True, null=True)
@@ -89,9 +92,9 @@ class Navio(models.Model):
 
     # Texto para permitir valores variados
     volume_descarga = models.CharField(blank=True, null=True)
-    clientes_descarga = models.CharField(blank=True, null=True)
+    peso_descarga = models.CharField(blank=True, null=True)
     volume_embarque = models.CharField(blank=True, null=True)
-    clientes_embarque = models.CharField(blank=True, null=True)  
+    peso_embarque = models.CharField(blank=True, null=True)  
 
     # Quem cadastrou
     criado_por = models.ForeignKey(
@@ -107,6 +110,8 @@ class FotoVideoNavio(models.Model):
     navio = models.ForeignKey(Navio, on_delete=models.CASCADE, related_name="midias")
     arquivo = models.FileField(upload_to="navios/midias/")
     observacao = models.TextField(blank=True, null=True)
+    tipo_peca = models.CharField(max_length=50, blank=True, null=True)  # Novo campo para tipo de peça
+    data_criacao = models.DateTimeField(auto_now_add=True)
 
     def is_image(self):
         return self.arquivo.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))

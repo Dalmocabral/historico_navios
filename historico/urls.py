@@ -1,10 +1,22 @@
 from django.urls import path
-from .views import dashboard, login, cadastrar_navio
+from .views import dashboard, login, cadastrar_navio, pesquisar_midias
+
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("", login.login_view, name="login"),
     path("logout/", login.logout_view, name="logout"),
     path("dashboard/", dashboard.dashboard_view, name="dashboard"),
     path("cadastrar_navio/", cadastrar_navio.cadastrar_navio, name="cadastrar_navio"),
-   
+
+    # Página HTML + endpoint JSON separados
+    path("pesquisa_midias/", pesquisar_midias.pagina_pesquisa_midias, name="pagina_pesquisa_midias"),
+    path("pesquisar_midias/", pesquisar_midias.pesquisar_midias, name="pesquisar_midias"),
+
+    path("midia/<int:pk>/editar/", pesquisar_midias.editar_midia, name="editar_midia"),
+    path("midia/<int:pk>/excluir/", pesquisar_midias.excluir_midia, name="excluir_midia"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
