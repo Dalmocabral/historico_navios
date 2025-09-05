@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import dashboard, login, cadastrar_navio, pesquisar_midias, excluir_midia, detalhes_midia, pdf_midia
+from .views import dashboard, login, cadastrar_navio, pesquisar_midias, excluir_midia, detalhes_midia, pdf_midia, editar_navio
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -13,8 +13,7 @@ urlpatterns = [
     # Página HTML + endpoint JSON separados
     path("pesquisa_midias/", pesquisar_midias.pagina_pesquisa_midias, name="pagina_pesquisa_midias"),
     path("pesquisar_midias/", pesquisar_midias.pesquisar_midias, name="pesquisar_midias"),
-
-    path("midia/<int:pk>/editar/", pesquisar_midias.editar_midia, name="editar_midia"),
+    path("midia/<int:pk>/editar/", editar_navio.editar_navio, name="editar_navio_via_midia"),
     path("midia/<int:pk>/excluir/", excluir_midia.excluir_midia, name="excluir_midia"),
     path("midia/<int:pk>/visualizar/", detalhes_midia.visualizar_midia, name="visualizar_midia"),
     path("midia/<int:pk>/pdf/", pdf_midia.gerar_pdf_midia, name="gerar_pdf_midia"),

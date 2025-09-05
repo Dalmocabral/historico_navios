@@ -29,22 +29,15 @@ def pesquisar_midias(request):
     data = []
     for midia in resultados:
         data.append({
-            "id": midia.id,
-            "tipo_peca": midia.tipo_peca,
-            "arquivo": midia.arquivo.url,
-            "is_image": midia.is_image(),
-            "is_video": midia.is_video(),
-            "navio": midia.navio.navio if midia.navio else "",
-            "inicio": midia.navio.inicio_operacao.strftime("%d/%m/%Y %H:%M") if midia.navio.inicio_operacao else "",
-            "fim": midia.navio.fim_operacao.strftime("%d/%m/%Y %H:%M") if midia.navio.fim_operacao else "",
-        })
+    "id": midia.id,
+    "arquivo": midia.arquivo.url,
+    "is_image": midia.is_image(),
+    "is_video": midia.is_video(),
+    "tipo_peca": midia.tipo_peca,
+    "navio": midia.navio.navio,
+    "navio_id": midia.navio.id,   # 👈 precisa mandar isso
+    "inicio": midia.navio.inicio_operacao.strftime("%d/%m/%Y %H:%M") if midia.navio.inicio_operacao else None,
+    "fim": midia.navio.fim_operacao.strftime("%d/%m/%Y %H:%M") if midia.navio.fim_operacao else None,
+})
     return JsonResponse({"resultados": data})
-
-
-
-@login_required
-def editar_midia(request, pk):
-    midia = get_object_or_404(FotoVideoNavio, pk=pk)
-    # aqui você pode implementar formulário de edição
-    return render(request, "historico/editar_midia.html", {"midia": midia})
 

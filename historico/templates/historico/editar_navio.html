@@ -1,0 +1,71 @@
+{% extends "base/base_dashboard.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">
+            <i class="bi bi-pencil-square text-warning"></i> Editar Navio
+        </h2>
+        <p class="text-muted">Atualize informações, mídias e documentos do navio</p>
+    </div>
+
+    <div class="card shadow-lg border-0">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h5 class="fw-bold">📋 Informações do Navio</h5>
+                {{ navio_form.as_p }}
+
+                <hr>
+                <h5 class="fw-bold">📑 Adicionar novos PDFs</h5>
+                <input type="file" name="arquivos" accept="application/pdf" multiple class="form-control">
+
+                {% if documentos %}
+                    <div class="mt-2">
+                        <p><strong>Documentos já anexados:</strong></p>
+                        <ul class="list-group">
+                            {% for doc in documentos %}
+                                <li class="list-group-item">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                    <a href="{{ doc.arquivo.url }}" target="_blank">{{ doc.arquivo.name|slice:"20:" }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <hr>
+                <h5 class="fw-bold">📷 Adicionar novas mídias</h5>
+                <input type="file" name="midias" multiple class="form-control">
+                <input type="text" name="tipo_peca" placeholder="Ex: Foto do convés" class="form-control mt-2">
+                <textarea name="observacoes" rows="2" class="form-control mt-2" placeholder="Observação"></textarea>
+
+                {% if midias %}
+                    <div class="mt-2">
+                        <p><strong>Mídias já anexadas:</strong></p>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for m in midias %}
+                                {% if m.is_image %}
+                                    <img src="{{ m.arquivo.url }}" class="img-thumbnail" style="max-height:120px;">
+                                {% elif m.is_video %}
+                                    <video src="{{ m.arquivo.url }}" class="rounded" style="max-height:120px;" controls></video>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Salvar Alterações
+                    </button>
+                    <a href="{% url 'pagina_pesquisa_midias' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
