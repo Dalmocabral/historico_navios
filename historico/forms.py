@@ -33,7 +33,7 @@ class NavioForm(forms.ModelForm):
             "eta": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "pob": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "inicio_operacao": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "tempo_operacao": forms.TimeInput(attrs={"type": "time"}),
+           "tempo_operacao": forms.TimeInput(attrs={"type": "time", "step": 1}),
             "fim_operacao": forms.TimeInput(attrs={"type": "datetime-local"}),
         }
 

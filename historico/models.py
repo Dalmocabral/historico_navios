@@ -73,12 +73,18 @@ def update_user_for_colaborador(sender, instance, **kwargs):
         
         
 class Navio(models.Model):
+    
+    BORDO_CHOICES = [
+        ('BB', 'Bombordo'),
+        ('BE', 'Boreste'),
+    ]
+    
     navio = models.CharField(max_length=100, blank=True, null=True)
     boca = models.CharField(max_length=50, blank=True, null=True)
     loa = models.CharField(max_length=50, blank=True, null=True)
     armador = models.CharField(max_length=100, blank=True, null=True)
     agencia = models.CharField(max_length=100, blank=True, null=True)
-    bordo = models.CharField(max_length=50, blank=True, null=True)
+    bordo = models.CharField(max_length=50, choices=BORDO_CHOICES, blank=True, null=True)
     eta = models.DateTimeField("ETA", blank=True, null=True)
     pob = models.DateTimeField("POB", blank=True, null=True)    
     inicio_operacao = models.DateTimeField("Início Operação", blank=True, null=True)

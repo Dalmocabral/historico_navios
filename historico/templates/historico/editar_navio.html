@@ -7,54 +7,106 @@
         <h2 class="fw-bold">
             <i class="bi bi-pencil-square text-warning"></i> Editar Navio
         </h2>
-        <p class="text-muted">Atualize informações, mídias e documentos do navio</p>
+        <p class="text-muted">Atualize informações, documentos e mídias do navio</p>
     </div>
 
     <div class="card shadow-lg border-0">
         <div class="card-body">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <h5 class="fw-bold">📋 Informações do Navio</h5>
-                {{ navio_form.as_p }}
 
-                <hr>
-                <h5 class="fw-bold">📑 Adicionar novos PDFs</h5>
-                <input type="file" name="arquivos" accept="application/pdf" multiple class="form-control">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs mb-3" id="editTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                            📋 Informações
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button" role="tab">
+                            📑 Documentos
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="midias-tab" data-bs-toggle="tab" data-bs-target="#midias" type="button" role="tab">
+                            📷 Mídias
+                        </button>
+                    </li>
+                </ul>
 
-                {% if documentos %}
-                    <div class="mt-2">
-                        <p><strong>Documentos já anexados:</strong></p>
-                        <ul class="list-group">
-                            {% for doc in documentos %}
-                                <li class="list-group-item">
-                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
-                                    <a href="{{ doc.arquivo.url }}" target="_blank">{{ doc.arquivo.name|slice:"20:" }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                <!-- Tab contents -->
+                <div class="tab-content" id="editTabsContent">
+                    
+                    <!-- Informações -->
+                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                        {{ navio_form.as_p }}
                     </div>
-                {% endif %}
 
-                <hr>
-                <h5 class="fw-bold">📷 Adicionar novas mídias</h5>
-                <input type="file" name="midias" multiple class="form-control">
-                <input type="text" name="tipo_peca" placeholder="Ex: Foto do convés" class="form-control mt-2">
-                <textarea name="observacoes" rows="2" class="form-control mt-2" placeholder="Observação"></textarea>
-
-                {% if midias %}
-                    <div class="mt-2">
-                        <p><strong>Mídias já anexadas:</strong></p>
-                        <div class="d-flex flex-wrap gap-2">
-                            {% for m in midias %}
-                                {% if m.is_image %}
-                                    <img src="{{ m.arquivo.url }}" class="img-thumbnail" style="max-height:120px;">
-                                {% elif m.is_video %}
-                                    <video src="{{ m.arquivo.url }}" class="rounded" style="max-height:120px;" controls></video>
-                                {% endif %}
-                            {% endfor %}
+                    <!-- Documentos -->
+                    <div class="tab-pane fade" id="docs" role="tabpanel">
+                        <h5 class="fw-bold">Adicionar PDFs</h5>
+                        <div id="pdfContainer">
+                            <div class="input-group mb-2">
+                                <input type="file" name="arquivos" accept="application/pdf" class="form-control">
+                                <button type="button" class="btn btn-outline-primary add-pdf">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </div>
                         </div>
+
+                        {% if documentos %}
+                            <hr>
+                            <p><strong>Documentos já anexados:</strong></p>
+                            <ul class="list-group">
+                                {% for doc in documentos %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                                        <a href="{{ doc.arquivo.url }}" target="_blank">
+    {{ doc.arquivo.name|cut:"documentos/" }}
+</a>
+                                        <span class="badge bg-secondary">PDF</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
-                {% endif %}
+
+                    <!-- Mídias -->
+                    <div class="tab-pane fade" id="midias" role="tabpanel">
+                        <h5 class="fw-bold">Adicionar Mídias</h5>
+                        <div id="midiaContainer">
+                            <div class="border rounded p-3 mb-2 bg-light">
+                                <input type="file" name="midias" class="form-control mb-2">
+                                <input type="text" name="tipo_peca" placeholder="Ex: Foto do convés" class="form-control mb-2">
+                                <textarea name="observacoes" rows="2" class="form-control" placeholder="Observação"></textarea>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm add-midia">
+                            <i class="bi bi-plus-circle"></i> Adicionar outra mídia
+                        </button>
+
+                        {% if midias %}
+                            <hr>
+                            <p><strong>Mídias já anexadas:</strong></p>
+                            <div class="d-flex flex-wrap gap-3">
+                                {% for m in midias %}
+                                    <div class="card shadow-sm" style="width: 150px;">
+                                        {% if m.is_image %}
+                                            <img src="{{ m.arquivo.url }}" class="card-img-top" style="height:100px; object-fit:cover;">
+                                        {% elif m.is_video %}
+                                            <video src="{{ m.arquivo.url }}" class="card-img-top" style="height:100px; object-fit:cover;" controls></video>
+                                        {% else %}
+                                            <div class="p-3 text-muted text-center">Arquivo</div>
+                                        {% endif %}
+                                        <div class="card-body p-2 text-center">
+                                            <small class="text-truncate d-block">{{ m.tipo_peca|default:"Sem descrição" }}</small>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
 
                 <div class="mt-4 text-end">
                     <button type="submit" class="btn btn-success">
@@ -68,4 +120,42 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Adicionar mais PDFs
+    document.querySelector("#pdfContainer").addEventListener("click", (e) => {
+        if (e.target.closest(".add-pdf")) {
+            const container = document.querySelector("#pdfContainer");
+            const inputGroup = document.createElement("div");
+            inputGroup.className = "input-group mb-2";
+            inputGroup.innerHTML = `
+                <input type="file" name="arquivos" accept="application/pdf" class="form-control">
+                <button type="button" class="btn btn-outline-danger remove-pdf">
+                    <i class="bi bi-dash-circle"></i>
+                </button>`;
+            container.appendChild(inputGroup);
+        }
+    });
+
+    // Remover PDFs extras
+    document.querySelector("#pdfContainer").addEventListener("click", (e) => {
+        if (e.target.closest(".remove-pdf")) {
+            e.target.closest(".input-group").remove();
+        }
+    });
+
+    // Adicionar mais mídias
+    document.querySelector(".add-midia").addEventListener("click", () => {
+        const container = document.querySelector("#midiaContainer");
+        const block = document.createElement("div");
+        block.className = "border rounded p-3 mb-2 bg-light";
+        block.innerHTML = `
+            <input type="file" name="midias" class="form-control mb-2">
+            <input type="text" name="tipo_peca" placeholder="Ex: Foto do convés" class="form-control mb-2">
+            <textarea name="observacoes" rows="2" class="form-control" placeholder="Observação"></textarea>`;
+        container.appendChild(block);
+    });
+});
+</script>
 {% endblock %}
