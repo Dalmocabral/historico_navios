@@ -12,8 +12,8 @@ def pagina_pesquisa_midias(request):
 
 @login_required
 def pesquisar_midias(request):
-    """Retorna os resultados da busca em JSON"""
     query = request.GET.get("q", "").strip()
+
     resultados = FotoVideoNavio.objects.select_related("navio")
 
     if query:
@@ -23,6 +23,7 @@ def pesquisar_midias(request):
             Q(navio__navio__icontains=query)
         )
     else:
+        # Se não digitou nada → pega todos, mais recentes primeiro
         resultados = resultados.order_by("-data_criacao")
 
     data = []
@@ -47,11 +48,3 @@ def editar_midia(request, pk):
     # aqui você pode implementar formulário de edição
     return render(request, "historico/editar_midia.html", {"midia": midia})
 
-
-@login_required
-def excluir_midia(request, pk):
-    midia = get_object_or_404(FotoVideoNavio, pk=pk)
-    if request.method == "POST":
-        midia.delete()
-        return redirect("pesquisar_midias")
-    return render(request, "historico/excluir_midia.html", {"midia": midia})
