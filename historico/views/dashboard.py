@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.utils import timezone
 from datetime import timedelta
 from ..models import Navio, FotoVideoNavio
+from django.contrib.auth.decorators import login_required
 #from ..utils.scraping_praticagem_reduzido import get_navios_cargo_reduzido
 
-
+@login_required
 def dashboard_view(request):
     # Total de navios
     total_navios = Navio.objects.count()
