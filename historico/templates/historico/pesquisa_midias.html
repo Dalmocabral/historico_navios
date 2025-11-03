@@ -1,7 +1,11 @@
-{% extends "base/base_dashboard.html" %} {% load static %} {% block content %}
+{% extends "base/base_dashboard.html" %}
+{% load static %}
+
+{% block content %}
 <div class="container mt-4 text-center">
   <h2>Pesquisa de Peças (Imagens)</h2>
   <br>
+
   <!-- Campo de busca -->
   <div class="input-group mb-4">
     <input
@@ -22,9 +26,7 @@
     const resultadosDiv = document.getElementById("resultados");
 
     async function fetchResultados(query) {
-      const response = await fetch(
-        `/pesquisar_midias/?q=${encodeURIComponent(query)}`
-      );
+      const response = await fetch(`/pesquisar_midias/?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       renderResultados(data.resultados);
     }
@@ -41,57 +43,73 @@
         const col = document.createElement("div");
         col.classList.add("col-md-4", "mb-4");
 
+        // 🔹 Define a imagem padrão
+        const placeholder = "{% static 'images/placeholder_navio.jpg' %}";
+        let mediaContent = "";
+
+        // 🔹 Se for vídeo
+        if (midia.is_video) {
+          mediaContent = `
+            <video src="${midia.arquivo}" 
+                   class="card-img-top img-fluid" 
+                   style="max-height:200px; object-fit:cover;" 
+                   controls></video>`;
+        } 
+        // 🔹 Se for imagem
+        else if (midia.is_image) {
+          mediaContent = `
+            <img src="${midia.arquivo}" 
+                 class="card-img-top img-fluid" 
+                 style="max-height:200px; object-fit:cover;" 
+                 alt="Imagem da Peça">`;
+        } 
+        // 🔹 Se não tiver imagem nem vídeo, usa placeholder
+        else {
+          mediaContent = `
+            <img src="${placeholder}" 
+                 class="card-img-top img-fluid" 
+                 style="max-height:200px; object-fit:cover;" 
+                 alt="Imagem padrão do navio">`;
+        }
+
+        // 🔹 Monta o card
         col.innerHTML = `
-                <div class="card h-100 shadow-sm">
-                    ${
-                      midia.is_image
-                        ? `<img src="${midia.arquivo}" class="card-img-top img-fluid" style="max-height:200px; object-fit:cover;">`
-                        : midia.is_video
-                        ? `<video src="${midia.arquivo}" class="card-img-top img-fluid" style="max-height:200px; object-fit:cover;" controls></video>`
-                        : `<div class="p-3 text-center text-muted">Arquivo não suportado</div>`
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">${
-                          midia.tipo_peca || "Sem descrição"
-                        }</h5>
-                        <p class="card-text">
-                            <strong>Navio:</strong> ${midia.navio || "---"}<br>
-                            <strong>Agência:</strong> ${midia.agencia || "---"}<br>
-                            <strong>Armador:</strong> ${midia.armador || "---"}<br>
-                            <strong>Início:</strong> ${midia.inicio || "---"}<br>
-                            <strong>Fim:</strong> ${midia.fim || "---"}
-                        </p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <a href="/midia/${
-                          midia.id
-                        }/visualizar/" class="btn btn-sm btn-info">Visualizar</a>
-                        <a href="/midia/${
-                          midia.id
-                        }/editar/" class="btn btn-sm btn-warning">Editar</a>
-                        <a href="/midia/${
-                          midia.id
-                        }/excluir/" class="btn btn-sm btn-danger">Excluir</a>
-                    </div>
-                </div>
-            `;
+          <div class="card h-100 shadow-sm">
+            ${mediaContent}
+            <div class="card-body">
+              <h5 class="card-title">${midia.tipo_peca || "Sem descrição"}</h5>
+              <p class="card-text">
+                <strong>Navio:</strong> ${midia.navio || "---"}<br>
+                <strong>Agência:</strong> ${midia.agencia || "---"}<br>
+                <strong>Armador:</strong> ${midia.armador || "---"}<br>
+                <strong>Início:</strong> ${midia.inicio || "---"}<br>
+                <strong>Fim:</strong> ${midia.fim || "---"}
+              </p>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+              <a href="/midia/${midia.id}/visualizar/" class="btn btn-sm btn-info">Visualizar</a>
+              <a href="/midia/${midia.id}/editar/" class="btn btn-sm btn-warning">Editar</a>
+              <a href="/midia/${midia.id}/excluir/" class="btn btn-sm btn-danger">Excluir</a>
+            </div>
+          </div>
+        `;
+
         resultadosDiv.appendChild(col);
       });
     }
 
-    // Evento de digitação com delay
+    // 🔹 Busca com atraso (300ms)
     let timeout = null;
     searchInput.addEventListener("input", function () {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         const query = searchInput.value.trim();
-        fetchResultados(query); // 🔥 sempre busca, mesmo vazio
-      }, 300); // delay de 300ms
+        fetchResultados(query);
+      }, 300);
     });
 
-    // 🔥 Chama ao carregar a página (já traz todos)
+    // 🔹 Carrega todos ao iniciar
     fetchResultados("");
   });
 </script>
 {% endblock %}
-<!DOCTYPE html>

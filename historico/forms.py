@@ -29,29 +29,34 @@ class NavioForm(forms.ModelForm):
             "inicio_operacao", "fim_operacao", "ternos", "tempo_operacao",
             "volume_descarga", "peso_descarga", "volume_embarque", "peso_embarque",
         ]
-        # Widgets para campos com tipos especiais (data, hora, etc.)
         widgets = {
             "eta": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "pob": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "inicio_operacao": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "fim_operacao": forms.DateTimeInput(attrs={"type": "datetime-local"}), # Corrigido de TimeInput para DateTimeInput
+            "fim_operacao": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "tempo_operacao": forms.TimeInput(attrs={"type": "time", "step": 1}),
         }
 
-    # ✅ PASSO 1: ADICIONE ESTE MÉTODO __init__
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Campos de data/hora já têm um label visível, então não precisam de form-floating
         datetime_fields = ['eta', 'pob', 'inicio_operacao', 'fim_operacao', 'tempo_operacao']
 
         for field_name, field in self.fields.items():
-            # Adiciona a classe 'form-control' a todos
             field.widget.attrs.update({'class': 'form-control'})
-
-            # Para campos que NÃO são de data/hora, adiciona um placeholder para o form-floating funcionar
             if field_name not in datetime_fields:
                 field.widget.attrs.update({'placeholder': field.label})
+
+    # ✅ Converte campos em maiúsculo antes de salvar
+    def clean(self):
+        cleaned_data = super().clean()
+        
+        for campo in ["navio", "armador", "agencia"]:
+            valor = cleaned_data.get(campo)
+            if valor:
+                cleaned_data[campo] = valor.upper()  # Converte para maiúsculas
+        
+        return cleaned_data
+
 
 # O seu FotoVideoNavioForm está bom, mas vamos garantir a classe para consistência
 class FotoVideoNavioForm(forms.ModelForm):

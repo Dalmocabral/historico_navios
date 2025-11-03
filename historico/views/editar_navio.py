@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from ..forms import NavioForm, DocumentoNavioForm, FotoVideoNavioForm
 from ..models import Navio, DocumentoNavio, FotoVideoNavio
 
-
 @login_required
 def editar_navio(request, pk):
     navio = get_object_or_404(Navio, pk=pk)

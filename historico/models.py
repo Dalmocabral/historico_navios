@@ -5,6 +5,8 @@ from django.core.validators import RegexValidator
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
+import os
 
 class Colaborador(models.Model):
     
@@ -113,17 +115,41 @@ class Navio(models.Model):
 
 
 class FotoVideoNavio(models.Model):
-    navio = models.ForeignKey(Navio, on_delete=models.CASCADE, related_name="midias")
-    arquivo = models.FileField(upload_to="navios/midias/")
+    navio = models.ForeignKey(
+        "Navio",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="midias"
+    )
+    arquivo = models.FileField(upload_to="navios/midias/", blank=True, null=True)
     observacao = models.TextField(blank=True, null=True)
-    tipo_peca = models.CharField(max_length=50, blank=True, null=True)  # Novo campo para tipo de peça
+    tipo_peca = models.CharField(max_length=50, blank=True, null=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def is_image(self):
-        return self.arquivo.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+        return self.arquivo and self.arquivo.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
 
     def is_video(self):
-        return self.arquivo.name.lower().endswith(('.mp4', '.avi', '.mov'))
+        return self.arquivo and self.arquivo.name.lower().endswith(('.mp4', '.avi', '.mov'))
+
+    def save(self, *args, **kwargs):
+        """
+        Remove o caminho forçado para placeholder — deixa o campo em branco.
+        """
+        super().save(*args, **kwargs)
+
+    def get_arquivo_url(self):
+        """
+        Retorna a URL do arquivo se existir, senão usa a imagem padrão (static).
+        """
+        if self.arquivo and os.path.exists(os.path.join(settings.MEDIA_ROOT, str(self.arquivo))):
+            return self.arquivo.url
+        return f"{settings.STATIC_URL}images/placeholder_navio.jpg"
+
+    def __str__(self):
+        return f"Mídia de {self.navio.navio if self.navio else 'Sem Navio'}"
+
     
     
 class DocumentoNavio(models.Model):
