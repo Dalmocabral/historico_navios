@@ -110,14 +110,14 @@ class Navio(models.Model):
     )
 
     def __str__(self):
-        return f"{self.armador or '---'} - {self.local_atracacao or '---'}"
+        return f"{self.navio}"
 
 
 
 class FotoVideoNavio(models.Model):
     navio = models.ForeignKey(
         "Navio",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,  # ✅ Agora se excluir o navio, apaga as mídias também
         null=True,
         blank=True,
         related_name="midias"
@@ -133,22 +133,14 @@ class FotoVideoNavio(models.Model):
     def is_video(self):
         return self.arquivo and self.arquivo.name.lower().endswith(('.mp4', '.avi', '.mov'))
 
-    def save(self, *args, **kwargs):
-        """
-        Remove o caminho forçado para placeholder — deixa o campo em branco.
-        """
-        super().save(*args, **kwargs)
-
     def get_arquivo_url(self):
-        """
-        Retorna a URL do arquivo se existir, senão usa a imagem padrão (static).
-        """
         if self.arquivo and os.path.exists(os.path.join(settings.MEDIA_ROOT, str(self.arquivo))):
             return self.arquivo.url
         return f"{settings.STATIC_URL}images/placeholder_navio.jpg"
 
     def __str__(self):
         return f"Mídia de {self.navio.navio if self.navio else 'Sem Navio'}"
+
 
     
     
